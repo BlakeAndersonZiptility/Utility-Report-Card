@@ -1,0 +1,51 @@
+// Prisma schema — Utility Report Card persistence layer.
+// One row per assessment; the scoring snapshot columns exist for
+// benchmarking queries (by state/size tier) without unpacking the answers
+// JSON. See MASTER_PLAN.md §2.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Assessment {
+  id            String    @id @default(cuid())
+  resumeToken   String    @unique @default(cuid())
+  status        String    @default("in_progress") // in_progress | completed
+  rubricVersion String    @default("2.1")
+
+  // Utility
+  systemName  String
+  state       String
+  pwsId       String?
+  connections Int?
+
+  // Contact (set at save-for-resume or at the results gate)
+  email               String?
+  contactName         String?
+  role                String?
+  consentBenchmarking Boolean @default(false)
+
+  // Answers keyed by dimension id: { "T1": { "grade": "C", "notSure": false }, ... }
+  answers Json
+
+  // Scoring snapshot (set on completion)
+  overall        String?
+  technical      String?
+  managerial     String?
+  financial      String?
+  practicalGrade String?
+  redlineFlags   String[] @default([])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  @@index([state])
+  @@index([email])
+  @@index([status, completedAt])
+}

@@ -30,6 +30,7 @@ interface WizardState {
   answers: Answers;
   contact: ContactInfo | null;
   submitted: boolean;
+  resumeToken?: string;
 }
 
 const INITIAL_STATE: WizardState = {
@@ -64,6 +65,26 @@ export default function AssessmentWizard() {
       // Storage full or blocked — assessment still works in memory.
     }
   }, [state]);
+
+  // Cross-device resume: /assessment?resume=<token> loads the saved server copy.
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get("resume");
+    if (!token) return;
+    fetch(`/api/resume/${encodeURIComponent(token)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((saved) => {
+        if (!saved) return;
+        setState((s) => ({
+          ...s,
+          utility: saved.utility,
+          answers: saved.answers,
+          resumeToken: saved.token,
+          step: Math.max(s.step, 1),
+        }));
+        window.history.replaceState(null, "", "/assessment");
+      })
+      .catch(() => {});
+  }, []);
 
   const answeredCount = useMemo(
     () => dimensions.filter((d) => state.answers[d.id]).length,
@@ -116,18 +137,26 @@ export default function AssessmentWizard() {
         )}
 
         {state.step >= 1 && state.step <= dimensions.length && (
-          <DimensionStep
-            index={state.step - 1}
-            answers={state.answers}
-            onAnswer={(id, grade, notSure) =>
-              setState((s) => ({
-                ...s,
-                answers: { ...s.answers, [id]: { grade, notSure } },
-              }))
-            }
-            onBack={() => setStep(state.step - 1)}
-            onNext={() => setStep(state.step + 1)}
-          />
+          <>
+            <DimensionStep
+              index={state.step - 1}
+              answers={state.answers}
+              onAnswer={(id, grade, notSure) =>
+                setState((s) => ({
+                  ...s,
+                  answers: { ...s.answers, [id]: { grade, notSure } },
+                }))
+              }
+              onBack={() => setStep(state.step - 1)}
+              onNext={() => setStep(state.step + 1)}
+            />
+            <SaveForLater
+              state={state}
+              onSaved={(token) =>
+                setState((s) => ({ ...s, resumeToken: token }))
+              }
+            />
+          </>
         )}
 
         {state.step === GATE_STEP && (
@@ -151,6 +180,7 @@ export default function AssessmentWizard() {
                   contact,
                   utility: state.utility,
                   answers: state.answers,
+                  resumeToken: state.resumeToken,
                 }),
               }).catch(() => {});
             }}
@@ -363,6 +393,119 @@ function DimensionStep({
           {index === dimensions.length - 1 ? "Finish →" : "Next →"}
         </button>
       </div>
+    </div>
+  );
+}
+
+function SaveForLater({
+  state,
+  onSaved,
+}: {
+  state: WizardState;
+  onSaved: (token: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<
+    | { kind: "idle" }
+    | { kind: "saving" }
+    | { kind: "saved"; resumeUrl: string; emailed: boolean }
+    | { kind: "unavailable" }
+    | { kind: "error" }
+  >({ kind: "idle" });
+
+  const save = async () => {
+    setStatus({ kind: "saving" });
+    try {
+      const response = await fetch("/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: state.resumeToken,
+          utility: state.utility,
+          answers: state.answers,
+          email: email || undefined,
+        }),
+      });
+      const body = await response.json();
+      if (body.ok) {
+        onSaved(body.token);
+        setStatus({
+          kind: "saved",
+          resumeUrl: body.resumeUrl,
+          emailed: body.emailed,
+        });
+      } else {
+        setStatus({ kind: "unavailable" });
+      }
+    } catch {
+      setStatus({ kind: "error" });
+    }
+  };
+
+  return (
+    <div className="no-print mt-10 rounded-lg border border-navy/15 bg-white/60 p-4 text-sm">
+      {!open ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="font-medium text-navy underline hover:text-clay"
+        >
+          Need to stop? Save &amp; resume on another device →
+        </button>
+      ) : (
+        <div className="space-y-3">
+          <p className="text-foreground/70">
+            Your progress already saves on this device automatically. To resume
+            on another device — or hand the financial section to the clerk —
+            get a resume link:
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email the link to… (optional)"
+              className="w-64 rounded-md border border-navy/30 bg-white px-3 py-2"
+            />
+            <button
+              type="button"
+              onClick={save}
+              disabled={status.kind === "saving"}
+              className="rounded-md border border-navy/40 px-4 py-2 font-medium text-navy hover:bg-navy/5 disabled:opacity-40"
+            >
+              {status.kind === "saving" ? "Saving…" : "Get resume link"}
+            </button>
+          </div>
+          {status.kind === "saved" && (
+            <div className="rounded-md border border-green-200 bg-green-50 p-3">
+              <p className="font-medium text-green-800">
+                Saved.{" "}
+                {status.emailed
+                  ? "A resume link is on its way to your inbox."
+                  : "Your resume link:"}
+              </p>
+              {!status.emailed && (
+                <p className="mt-1 break-all font-mono text-xs text-green-900">
+                  {status.resumeUrl}
+                </p>
+              )}
+            </div>
+          )}
+          {status.kind === "unavailable" && (
+            <p className="text-foreground/60">
+              Cross-device save isn&apos;t available right now — your progress
+              is still saved in this browser.
+            </p>
+          )}
+          {status.kind === "error" && (
+            <p className="text-red-700">
+              Couldn&apos;t save just now — your progress is still in this
+              browser. Try again in a minute.
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

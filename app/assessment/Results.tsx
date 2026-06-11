@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { actionPlanFor, dimensions, rubric } from "@/lib/content";
 import { score } from "@/lib/scoring";
 import type { Answers, ContactInfo, Grade, UtilityInfo } from "@/lib/types";
@@ -12,6 +12,51 @@ const GRADE_COLORS: Record<Grade, string> = {
   B: "text-emerald-600",
   A: "text-green-700",
 };
+
+function DownloadPdfButton({
+  utility,
+  contact,
+  answers,
+}: {
+  utility: UtilityInfo;
+  contact: ContactInfo;
+  answers: Answers;
+}) {
+  const [busy, setBusy] = useState(false);
+  const download = async () => {
+    setBusy(true);
+    try {
+      const response = await fetch("/api/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ utility, contact, answers }),
+      });
+      if (!response.ok) throw new Error(String(response.status));
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `utility-report-card-${new Date().getFullYear()}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.alert(
+        "PDF generation failed — use Print to save a copy, and try again in a minute."
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <button
+      onClick={download}
+      disabled={busy}
+      className="rounded-md bg-clay px-4 py-2 text-sm font-semibold text-white shadow hover:bg-clay/90 disabled:opacity-40"
+    >
+      {busy ? "Generating…" : "Download PDF action plan"}
+    </button>
+  );
+}
 
 const GRADE_BG: Record<Grade, string> = {
   F: "bg-red-50 border-red-200",
@@ -53,12 +98,19 @@ export default function Results({
             {contact.name} ({contact.role})
           </p>
         </div>
-        <button
-          onClick={() => window.print()}
-          className="no-print rounded-md border border-navy/30 px-4 py-2 text-sm font-medium text-navy hover:bg-navy/5"
-        >
-          Print / save PDF
-        </button>
+        <div className="no-print flex flex-col gap-2">
+          <DownloadPdfButton
+            utility={utility}
+            contact={contact}
+            answers={answers}
+          />
+          <button
+            onClick={() => window.print()}
+            className="rounded-md border border-navy/30 px-4 py-2 text-sm font-medium text-navy hover:bg-navy/5"
+          >
+            Print
+          </button>
+        </div>
       </div>
 
       {/* Composite grades */}

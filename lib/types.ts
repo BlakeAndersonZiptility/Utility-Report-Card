@@ -30,10 +30,12 @@ export interface ActionPlanLibrary {
   library: Record<string, Record<Transition, string>>;
 }
 
-export interface DimensionAnswer {
+// Type alias (not interface) so it satisfies Prisma's InputJsonValue when
+// persisted in the answers JSON column.
+export type DimensionAnswer = {
   grade: Grade;
   notSure?: boolean;
-}
+};
 
 /** Answers keyed by dimension id (T1..T9, M1..M8, F1..F6). */
 export type Answers = Record<string, DimensionAnswer>;
