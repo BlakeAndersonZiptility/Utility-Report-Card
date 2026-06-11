@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* Palette C from the white paper visual brief: navy + clay + parchment. */
+:root {
+  --background: #f4f1ed;
+  --foreground: #1f2933;
+  --navy: #1f4e79;
+  --clay: #b25d2c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-navy: var(--navy);
+  --color-clay: var(--clay);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+  }
+}

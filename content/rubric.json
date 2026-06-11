@@ -1,0 +1,365 @@
+{
+  "version": "2.1",
+  "title": "Utility Health Report Card",
+  "subtitle": "A self-administered TMF diagnostic for water systems under 10,000 connections",
+  "gradeLadder": {
+    "F": "Survival",
+    "D": "Existing Day-to-Day",
+    "C": "Fairly Stable",
+    "B": "Very Stable",
+    "A": "Thriving"
+  },
+  "legs": {
+    "T": "Technical",
+    "M": "Managerial",
+    "F": "Financial"
+  },
+  "redLineNote": "Red-line set per workbook v2.1 (7 dimensions: T5, T7, T8, M3, M8, F1, F2). The white paper recommends 6 (without M3) — open decision A1 for Blake. Configurable in lib/config.ts.",
+  "dimensions": [
+    {
+      "id": "T1",
+      "name": "Asset Inventory",
+      "leg": "T",
+      "redLine": false,
+      "definition": "Documented record of every physical asset (wells, tanks, mains, hydrants, valves, meters, pumps, controls) with installation date, condition, and replacement cost.",
+      "grades": {
+        "F": "No known asset inventory documented or discussed.",
+        "D": "Possibly a few core assets documented (e.g., wells, tanks). Historical information known but not documented. Reliant on oral tradition.",
+        "C": "Primary assets (wells, tanks, mainlines) listed with installation year or approximate age. Well drawdown and production capacity monitored on an annual schedule. Pump replacement and tank coating anticipated and projected using historical data.",
+        "B": "Inventory includes primary and secondary assets (hydrants, valves, meters) with condition ratings and replacement costs. Primary and secondary assets assigned anticipated useful lifespans and repair costs; locations reviewed periodically. Assets tracked with annual replacement goals based on lifespan.",
+        "A": "Comprehensive, real-time updating of inventory with condition data, criticality rankings, and cost data all fed by daily workflows."
+      },
+      "sources": "EPA Five Core Questions (Q1); AWWA M5 §3; ISO 55000 §3.2; AquaRating Asset Knowledge indicators."
+    },
+    {
+      "id": "T2",
+      "name": "System Map / GIS",
+      "leg": "T",
+      "redLine": false,
+      "definition": "Spatial representation of the system: source locations, treatment, storage, distribution mains, services, and service area boundary.",
+      "grades": {
+        "F": "Hand-drawn map with only wells/tanks; limited coverage or detail.",
+        "D": "Paper or basic digital map of major facilities (sources, tanks, mains, pumps) and boundaries.",
+        "C": "Digital map (GIS/CAD) includes pipe sizes and materials; updated periodically.",
+        "B": "GIS-based; integrated with work orders and O&M practices; routinely updated and validated.",
+        "A": "GIS-based; asset management data logging automated through standard workflows. Cost associations of assets and work orders integrated to the platform. Work orders include labor, equipment, and inventory costs."
+      },
+      "sources": "EPA Source Water Protection mapping guidance; AWWA M32; AquaRating Network Knowledge indicators."
+    },
+    {
+      "id": "T3",
+      "name": "Data Systems Maturity",
+      "leg": "T",
+      "redLine": false,
+      "definition": "Integration of CMMS, SCADA, billing, and GIS into a coherent operational data layer. Distinct from asset inventory (T1).",
+      "grades": {
+        "F": "No digital systems; all records on paper or in single-user spreadsheets. No SCADA or remote monitoring.",
+        "D": "Disconnected single-purpose tools (a spreadsheet for billing; a paper logbook for O&M; a separate filing cabinet for compliance). Data does not move between systems without re-keying.",
+        "C": "Core digital systems exist (billing software; basic SCADA on critical assets) but operate in silos. Reports compiled manually by hand-copying.",
+        "B": "CMMS or work-order software in routine use; SCADA covers source and storage with alarms; billing integrates with GIS service points. Reports generated with minimal hand-compilation.",
+        "A": "Single integrated data platform: GIS, work orders, condition, SCADA, billing, and compliance records all linked. Decisions queryable from any role in the utility without IT intervention."
+      },
+      "sources": "EPA Five Core Questions (Q1, Q3); AWWA M32; Teodoro 2018 on data infrastructure; AquaRating IT integration."
+    },
+    {
+      "id": "T4",
+      "name": "Capital Asset Condition Assessment",
+      "leg": "T",
+      "redLine": false,
+      "definition": "Disciplined practice of evaluating asset condition (not just existence). Distinct from inventory (T1).",
+      "grades": {
+        "F": "No condition assessment of any asset. Condition discovered only at failure.",
+        "D": "Informal condition awareness: operator knows which assets are 'old' or 'have always been finicky' but no formal rating.",
+        "C": "Visual condition assessment performed on a defined cycle for critical above-ground assets. Documented with photos and notes.",
+        "B": "Standardized 1–5 condition rubric applied to primary and secondary assets on a defined cycle. Below-ground assets proxied with age + material + break-history scoring. Condition data feeds the capital plan.",
+        "A": "Instrumented condition data (energy draw, pressure profile, leak detection, valve exercise records) drives a real-time risk model. Capital plan auto-updates as condition data accumulates."
+      },
+      "sources": "EPA Five Core Questions (Q3); AWWA M5 condition rubric; ISO 55001 §9.1; AquaRating Asset Performance."
+    },
+    {
+      "id": "T5",
+      "name": "Operations & Maintenance Practices",
+      "leg": "T",
+      "redLine": true,
+      "definition": "Routine and preventive maintenance discipline, documentation, and data capture.",
+      "grades": {
+        "F": "No known routine maintenance procedures; entirely reactive. Operator not seen beyond monthly sampling. Onsite representative not documented. Community members or board members responding to and performing repairs without communication from the operator.",
+        "D": "Informal knowledge; limited documentation; almost entirely reactive. Operator or onsite operator performs regular weekly inspection of wells only. Inspections have limited data beyond meter production read.",
+        "C": "Regular site inspections and preventative maintenance of disinfection equipment. Redundant assets allow for well inspection and maintenance during pump replacement. Valve, hydrant, meter O&M aspirational but irregularly performed and not tracked/reported on. Some O&M procedures and templates documented.",
+        "B": "Repairs logged and tracked over time. Preventive maintenance schedule exists and is tracked; documented procedures. Often logged digitally to improve efficiency and progress. Energy consumption data informs pump and motor health indicators.",
+        "A": "All staff O&M tracked digitally. Documented PM program includes standardized condition assessment collection; data used to improve schedules and performance."
+      },
+      "sources": "AWWA M19/M32/M44 series; EPA O&M Best Practices Guide; AquaRating Operations."
+    },
+    {
+      "id": "T6",
+      "name": "Water Loss / Non-Revenue Water",
+      "leg": "T",
+      "redLine": false,
+      "definition": "AWWA M36 water audit methodology: real losses, apparent losses, and infrastructure leakage index (ILI).",
+      "grades": {
+        "F": "No water audit performed. Production and billed volumes not compared.",
+        "D": "Production vs. billed comparison done informally; loss percentage estimated but not validated. >40% non-revenue water common.",
+        "C": "Annual AWWA M36 top-down audit completed. Loss percentage in the 20–40% range. Limited data validity grading; no leak detection program.",
+        "B": "M36 audit completed and data-validity-graded annually. Real-loss target set; loss percentage in the 10–20% range. Active leak detection on a defined cycle.",
+        "A": "M36 audit with high data validity (>70). Real losses below benchmark for system size. Component analysis informs capital prioritization."
+      },
+      "sources": "AWWA M36; EPA Water Audit Manual; AquaRating Water Loss indicator."
+    },
+    {
+      "id": "T7",
+      "name": "Regulatory Compliance",
+      "leg": "T",
+      "redLine": true,
+      "definition": "SDWA primary/secondary standards; monitoring schedule adherence; CCR delivery; LCR inventory; AWIA RRA cycle.",
+      "grades": {
+        "F": "Multiple ongoing violations and/or enforcement actions.",
+        "D": "Periodic violations for missed monitoring periods; regularly struggles with sampling schedule (Lead and Copper, DBP, nitrates).",
+        "C": "Generally compliant; occasional late or missed reports.",
+        "B": "Fully compliant; proactive about meeting deadlines and addressing issues. Multiple years typically between violations, primarily for late report submission.",
+        "A": "Exceeds compliance; participates in voluntary programs; adopts best practices early. A violation would be viewed as a black eye organization-wide."
+      },
+      "sources": "SDWA primary/secondary regulations (40 CFR 141, 142, 143); SDWIS data; EPA enforcement guidance."
+    },
+    {
+      "id": "T8",
+      "name": "Emergency Preparedness",
+      "leg": "T",
+      "redLine": true,
+      "definition": "Emergency Response Plan (ERP), redundancy, backup power, SCADA alarms, mutual-aid agreements.",
+      "grades": {
+        "F": "No known emergency plan or backups.",
+        "D": "Some redundancy of sources or storage exists, but no formal Emergency Operations Plan or alarm system.",
+        "C": "Emergency Operations Plan known to a few; not tested or discussed. Remote monitoring with alarm notification of low water levels.",
+        "B": "Backup power generation onsite. SCADA with localized programming and real-time alarms of power loss and motor start failure.",
+        "A": "Plan war-gamed annually; mutual aid agreements in place with other utilities."
+      },
+      "sources": "AWIA §2013 (42 USC 300i-2); EPA ERP guidance; WARN networks; AWWA J100."
+    },
+    {
+      "id": "T9",
+      "name": "Water Quality Practice",
+      "leg": "T",
+      "redLine": false,
+      "definition": "Treatment-optimization and water-quality management practice maturity, distinct from bare-minimum regulatory compliance (T7).",
+      "grades": {
+        "F": "Water quality understood only as the next regulated sample. No trending of source or distribution data. No proactive optimization.",
+        "D": "Source water and distribution residuals sampled at regulatory minimum frequency. Some retention of historical data but trends not analyzed.",
+        "C": "Source and distribution sampling at frequencies above regulatory minimum. Annual review of trends. LCR inventory current and verified.",
+        "B": "Optimization practice in place (CT optimization, disinfection-byproduct minimization, distribution residual mapping). Trend analysis informs treatment changes.",
+        "A": "Online water-quality sensors with real-time alerts. Predictive treatment adjustments. Participation in AWWA Partnership for Safe Water or analogous voluntary program."
+      },
+      "sources": "EPA SDWA primary regs; AWWA Partnership for Safe Water; AWWA M48 (Optimization); SDWA50 stream on quality-beyond-compliance."
+    },
+    {
+      "id": "M1",
+      "name": "Board / Governance Effectiveness",
+      "leg": "M",
+      "redLine": false,
+      "definition": "Quality and discipline of the governing body (board, council, district commission). Meeting cadence, transparency, role clarity, and oversight focus.",
+      "grades": {
+        "F": "Board does not meet regularly or lacks quorum. Decisions regularly made without meetings due to crisis or lack of formality.",
+        "D": "Meetings occur but records and transparency are weak; roles unclear. Struggles to make decisions; issues often get tabled across multiple meetings. High board member turnover due to conflict. Difficult to find community members willing to serve. Policy unclear and not revised. Majority of board focus and discussion is on actions of staff or contractors. Occasional conflict with staff due to board micromanagement.",
+        "C": "Regular meetings with agendas and minutes; roles loosely defined. Supplemental documents reviewed in advance. Board still occasionally involved with customer issues rather than strict oversight and governance. In the past 10 years a board member has resigned mid-term due to conflict. Policy exists and is updated occasionally.",
+        "B": "Clear roles and policies well established; consistent oversight of utility management. Many long-term board members. Strong trust and respect. Meetings with major problems, strong disagreement, or attendee outbursts would be unusual.",
+        "A": "Board engages in strategic planning, policy adoption, and continuous training; strong oversight. Board is heavily supported by staff development of board materials based on verbal feedback in meetings."
+      },
+      "sources": "EPA Capacity Development Handbook §M; RCAP Board Training; AWWA M37; Teodoro & Switzer on board capacity."
+    },
+    {
+      "id": "M2",
+      "name": "Training & Capacity-Building Participation",
+      "leg": "M",
+      "redLine": false,
+      "definition": "Routine operator and board participation in continuing education, certifications, and capacity-building programs (state primacy, RCAP, RCAC, NRWA, EFCN).",
+      "grades": {
+        "F": "No training completed; most concepts unfamiliar.",
+        "D": "One operator or board member has limited training or experience; no structured approach.",
+        "C": "Regular technical training participation by the operator; limited executive-level training. Board members occasionally attend trainings. AMP reviewed annually by board or management.",
+        "B": "Defined management roles; ongoing training every cycle; expectations documented. Rates reviewed annually by board or management.",
+        "A": "Culture of continuous improvement; training is routine and integrated into governance."
+      },
+      "sources": "EPA Capacity Development Strategy (SDWA §1420); NRWA training catalog; RCAP/RCAC TA; EFCN small-utility curricula."
+    },
+    {
+      "id": "M3",
+      "name": "Evidence-Based Decision-Making",
+      "leg": "M",
+      "redLine": true,
+      "definition": "Use of asset, condition, financial, and customer data to inform real decisions (rate-setting, capital prioritization, funding applications). The Living Map is the operational answer.",
+      "grades": {
+        "F": "Decisions made on memory or anecdote; no data layer referenced; no AMP or condition data consulted.",
+        "D": "Data exists in pieces but is not used in board meetings or capital decisions. AMP elements occasionally referenced; not central to planning.",
+        "C": "Some data informs rate reviews and maintenance scheduling. Condition data referenced when major capital decisions arise.",
+        "B": "Asset, condition, and financial data actively drives strategic decisions, rate cases, and funding applications. Living Map / AMP maintained continuously.",
+        "A": "Predictive and proactive data-driven management embedded in governance and culture; data informs all major decisions; peer benchmarking routine."
+      },
+      "sources": "EPA Five Core Questions; white paper §5–7 (Living Map framework); AWWA M5 §10; Teodoro on evidence-based management."
+    },
+    {
+      "id": "M4",
+      "name": "Succession & Workforce Planning",
+      "leg": "M",
+      "redLine": false,
+      "definition": "Documented succession for operator and key administrative roles; redundant staffing; documented knowledge transfer; awareness of workforce-cliff risk.",
+      "grades": {
+        "F": "No succession plan; critical knowledge concentrated in one person.",
+        "D": "Minimal backup; at risk if a key person departs; undocumented knowledge.",
+        "C": "Some documentation and redundant staffing; notable gaps remain.",
+        "B": "Documented succession plan; backups trained for critical positions.",
+        "A": "Active succession program with pathways, redundancy in critical roles, and documented knowledge transfer."
+      },
+      "sources": "EFCN workforce-cliff studies; AWWA State of the Water Industry; Teodoro on operator demographics."
+    },
+    {
+      "id": "M5",
+      "name": "Customer Communication & Engagement",
+      "leg": "M",
+      "redLine": false,
+      "definition": "Routine, accessible, two-way communication with the customer base; not just CCR delivery.",
+      "grades": {
+        "F": "No regular customer communication. Customers do not know how to get updates through any channel.",
+        "D": "Reactive communication mainly during crises; limited outreach. Customers look to board members, neighbors, or operator for updates.",
+        "C": "Periodic notices (rate letters); basic updates provided. Customers look to correct channels.",
+        "B": "Regular newsletters and website updates; proactive outage and project notices.",
+        "A": "Two-way channels (alerts, social, surveys); responsiveness tracked and reported."
+      },
+      "sources": "SDWA CCR requirements (40 CFR 141 Subpart O); EPA public communication guidance; Bridges trust-building."
+    },
+    {
+      "id": "M6",
+      "name": "Regional Cooperation & System Integration",
+      "leg": "M",
+      "redLine": false,
+      "definition": "Openness to interconnection, satellite management arrangements, shared services, joint procurement, and consolidation. Tracks both formal arrangements and cultural posture.",
+      "grades": {
+        "F": "No formal or informal partnership with any other utility. Posture is defensive: 'we run our own system.' Interconnection or shared services not considered.",
+        "D": "One-off mutual aid agreement exists on paper but has not been exercised. Joint procurement not pursued. Consolidation viewed as loss of local control.",
+        "C": "Active mutual aid; occasional joint procurement (chemicals, locates); routine but limited communication with neighboring systems. Open to satellite management discussion if state-supported.",
+        "B": "Formal satellite management or shared services agreement in place for at least one function (operator, billing, engineering). Joint procurement routine. Consolidation studied where viability requires it.",
+        "A": "Active multi-system regional cooperation; integrated operations across multiple boards; consolidation pursued where viability requires it."
+      },
+      "sources": "WA DOH satellite mgmt (RCW 70A.125 / WAC 246-295); EPA Restructuring guidance; Scotland Water consolidation; AWWA M37."
+    },
+    {
+      "id": "M7",
+      "name": "Source Water & Watershed Stewardship",
+      "leg": "M",
+      "redLine": false,
+      "definition": "Source water assessment, wellhead/intake protection plan, drought planning, watershed coordination with non-utility actors.",
+      "grades": {
+        "F": "No source water assessment on file. No wellhead or intake protection program. Drought planning absent.",
+        "D": "State-completed source water assessment on file but not used. No active protection or watershed engagement.",
+        "C": "Wellhead/intake protection plan adopted; some routine inspection of vulnerability points. Drought plan exists.",
+        "B": "Active source water protection program; ordinances or land-use coordination with local government; drought triggers tied to operations.",
+        "A": "Embedded in watershed-scale stewardship: multi-stakeholder coordination, conservation easements, source-water funding mechanisms, climate-adaptation planning."
+      },
+      "sources": "EPA Source Water Protection program; SDWA §1453; AWWA G300; state primacy SWAP guidance."
+    },
+    {
+      "id": "M8",
+      "name": "Workforce / Operator Bench",
+      "leg": "M",
+      "redLine": true,
+      "definition": "Operator workforce depth distinct from board-level succession (M4): operator certifications, hours-on-system, contract vs. employee structure, certification redundancy, age.",
+      "grades": {
+        "F": "Single operator; minimum certification level; <8 hours/week onsite; no documented backup operator. Workforce-cliff risk acute.",
+        "D": "Single operator with appropriate certification level; 8–20 hours/week onsite; informal backup arrangement with neighboring utility or circuit rider.",
+        "C": "Operator certified at appropriate or higher class; ≥20 hours/week onsite; one documented backup operator with reciprocal arrangement.",
+        "B": "Operator certified above minimum class; full-time onsite; documented apprentice or relief operator in place; participation in NRWA / state RWA operator network.",
+        "A": "Operator with succession pathway (apprentice, journeyman, lead operator). Multiple staff certified above minimum. Active recruitment pipeline through state RWA or community college program."
+      },
+      "sources": "EFCN workforce-cliff studies; AWWA State of the Water Industry workforce reports; state primacy operator-certification rules; Teodoro on workforce demographics."
+    },
+    {
+      "id": "F1",
+      "name": "Financial Reserves",
+      "leg": "F",
+      "redLine": true,
+      "definition": "Cash on hand and reserve accounts available for unbudgeted repair, emergency, or rate-stabilization needs.",
+      "grades": {
+        "F": "Under $25,000.",
+        "D": "Under $50,000 or 4 months operating expense (whichever is greater).",
+        "C": "Under $100,000 or 9 months operating expense (whichever is greater). Reserves in an interest-bearing money market account.",
+        "B": "Under $250,000 or 18 months operating expense (whichever is greater). Reserves held in rolling interest-bearing CDs.",
+        "A": "Over $250,000 or 5 years of income on hand (whichever is greater)."
+      },
+      "sources": "GFOA Reserve Policy Guidance; EPA AWIA ERP reserve guidance; Teodoro 2018 small-utility reserves data."
+    },
+    {
+      "id": "F2",
+      "name": "Rate Adequacy",
+      "leg": "F",
+      "redLine": true,
+      "definition": "Rate structure relative to true cost of service (O&M + capital + reserves + affordability program). Review cadence and depreciation accounting.",
+      "grades": {
+        "F": "Rates unchanged for many years; cannot cover O&M reliably.",
+        "D": "O&M ±7.5%. Rates updated every 8–10 years; increases not done with any real analysis of need. Goal to meet break-even budgeting plus limited reserves. Rate increases seen as the enemy to avoid at all cost. Heavy concern about rates being affordable and burdensome on community.",
+        "C": "O&M + 10–20%. Rates reviewed every 3–5 years; rates meet O&M comfortably but struggle to generate enough to progress through capital replacement goals. Depreciation of assets not considered. Rates viewed as a headache likely to cause conflict and are kept low as a result.",
+        "B": "O&M + 20–30%. Rates reviewed annually compared to previous year budgets but updated every 3 years. Depreciation of minor and major assets accounted for. Rates sufficient to meet needs, but hesitancy to be 'overly aggressive' in asset replacement. Reluctant to raise rates or commit proactively for significant infrastructure projects that would provide water security decades into the future. Rate increases seen as a necessary evil; smaller increases every few years are recognized as better for the utility and easier on lower-income customers.",
+        "A": "O&M + 30–50%. Rates proactively adjusted with increases planned over five-year periods with accounting for anticipated inflation. Strong reserves. Rates viewed as amoral: they represent the full cost of service to sustainably operate the utility. Affordability concerns addressed through customer assistance programs. Willing to make substantial investment in capital projects to meet projected supply needs of the future."
+      },
+      "sources": "EPA Financial Capability Assessment; EFCN rate-setting handbook; Teodoro & Saywitz; AWWA M1."
+    },
+    {
+      "id": "F3",
+      "name": "Financial Planning / CIP",
+      "leg": "F",
+      "redLine": false,
+      "definition": "Multi-year operating budget, capital improvement plan, debt management, and integration of asset depreciation into financial forecasting.",
+      "grades": {
+        "F": "No formal budget; entirely reactive spending.",
+        "D": "Annual O&M budget only; no capital plan or projections. No assets listed on balance sheet.",
+        "C": "Multi-year budget acknowledges replacement needs; basic projections. Assets included on balance sheet.",
+        "B": "Capital Improvement Plan with life-cycle costing; capital plan adequately funded and reviewed. Asset depreciation accounted for. CIP identifies internal and external funding sources.",
+        "A": "Long-term financial plan aligned with asset renewal; proactive adjustments; affordability strategies in place. Customer assistance program regularly communicated and established."
+      },
+      "sources": "GASB 34 and 51; EPA AMP guidance; AWWA M5; GFOA Long-Range Financial Planning."
+    },
+    {
+      "id": "F4",
+      "name": "Financial Recordkeeping & Audit",
+      "leg": "F",
+      "redLine": false,
+      "definition": "Accuracy, timeliness, and independent review of financial records. Internal controls.",
+      "grades": {
+        "F": "No reliable financial records or tracking.",
+        "D": "Records exist but are inaccurate, late, or incomplete.",
+        "C": "Financial statements and annual budgets produced; basic reporting and tracking.",
+        "B": "External audit or review conducted; timely reports to board and stakeholders.",
+        "A": "Transparent, audited financials with strong internal controls and forecasting tools."
+      },
+      "sources": "GFOA budget standards; state local-government audit requirements; GASB GAAP; Government Auditing Standards."
+    },
+    {
+      "id": "F5",
+      "name": "Affordability Measurement",
+      "leg": "F",
+      "redLine": false,
+      "definition": "Routine measurement of customer affordability burden using a defined methodology. Distinct from CAP implementation (F6).",
+      "grades": {
+        "F": "Affordability not measured. No methodology applied. Hardship known only through shut-off and complaint patterns.",
+        "D": "Affordability informally discussed at board meetings. No defined methodology; comparisons drawn from neighboring-utility rates rather than household-level data.",
+        "C": "Affordability measured annually using a defined methodology (% of MHI, AR, or HBI). Results reported to board but do not yet inform rate design.",
+        "B": "Affordability measured annually; results inform rate design and capital planning trade-offs. Tracking of % households above the 4.5%-MHI threshold or equivalent.",
+        "A": "Affordability integrated into rate-setting and capital planning at every cycle. Census-tract-level analysis. Cross-class subsidy mechanisms in rate structure."
+      },
+      "sources": "EPA Financial Capability Assessment §3; Teodoro & Saywitz affordability methodology; AWWA M1 affordability chapter."
+    },
+    {
+      "id": "F6",
+      "name": "Customer Assistance Program Implementation",
+      "leg": "F",
+      "redLine": false,
+      "definition": "Active provision of customer assistance for households above the affordability threshold. Distinct from affordability measurement (F5).",
+      "grades": {
+        "F": "No customer assistance program. Shut-offs proceed without consideration of household financial state.",
+        "D": "Hardship handled case-by-case by the operator or clerk. No documented CAP.",
+        "C": "LIHWAP or equivalent customer assistance program available but not actively promoted. Limited enrollment; no tracking.",
+        "B": "Customer assistance program actively promoted; enrollment tracked; multiple assistance tools available (payment plans, leak forgiveness, conservation kits).",
+        "A": "Mature CAP with cross-subsidy, income-based rates, payment plans, leak forgiveness. External funding (state, LIHWAP, foundation) sustains the program. Annual reporting of enrollment, retention, and outcomes."
+      },
+      "sources": "LIHWAP authorizing statute (42 USC 4571 et seq.); EPA Financial Capability Assessment; AWWA Customer Assistance Programs guidance."
+    }
+  ]
+}
