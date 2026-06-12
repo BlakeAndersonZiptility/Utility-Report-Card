@@ -44,6 +44,7 @@ const TOMATO = "#ff442f";
 const SLATE = "#42515f";
 const DIM = "#5f6469";
 const RULE = "#ddd5ca";
+const LINEN = "#f6eee6";
 
 const GRADE_COLORS: Record<Grade, string> = {
   F: "#b91c1c",
@@ -97,6 +98,15 @@ function encouragerFor(dimensionId: string, grade: Grade): string {
   const variants = ENCOURAGERS[grade];
   return variants[index % variants.length];
 }
+
+/** Short ladder words that fit the rail without ragged wrapping. */
+const LADDER_SHORT: Record<Grade, string> = {
+  F: "Survival",
+  D: "Day-to-Day",
+  C: "Fairly Stable",
+  B: "Very Stable",
+  A: "Thriving",
+};
 
 function nextGrade(grade: Grade): Grade | null {
   const i = GRADE_ORDER.indexOf(grade);
@@ -176,11 +186,32 @@ const styles = StyleSheet.create({
   dimRow: {
     flexDirection: "row",
     gap: 14,
-    paddingVertical: 9,
+    paddingVertical: 8,
     borderBottom: `1pt solid ${RULE}`,
   },
-  dimRail: { width: 44, alignItems: "center", paddingTop: 1 },
+  dimRail: { width: 46, alignItems: "center", paddingTop: 1 },
   dimLetter: { fontSize: 24, fontWeight: "bold", lineHeight: 1.1 },
+  ladderScale: { marginTop: 3, alignItems: "center" },
+  ladderStep: { fontSize: 6, lineHeight: 1.35, color: "#c9c1b4" },
+  ladderStepCurrent: { fontSize: 6, lineHeight: 1.35, fontWeight: "bold" },
+  legendBand: {
+    marginTop: 14,
+    backgroundColor: LINEN,
+    borderRadius: 5,
+    padding: 9,
+  },
+  signatureRow: {
+    flexDirection: "row",
+    gap: 24,
+    marginTop: 16,
+  },
+  signatureCell: { flex: 1 },
+  signatureLine: {
+    borderBottom: `0.75pt solid ${SLATE}`,
+    height: 14,
+    marginBottom: 3,
+  },
+  signatureLabel: { fontSize: 7, color: DIM },
   footer: {
     position: "absolute",
     bottom: 22,
@@ -194,6 +225,29 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
 });
+
+/**
+ * The ladder, made visible: five rungs top-to-bottom (A down to F) with the
+ * current rung highlighted — "you are here" on the climb.
+ */
+function LadderScale({ current }: { current: Grade }) {
+  return (
+    <View style={styles.ladderScale}>
+      {[...GRADE_ORDER].reverse().map((g) => (
+        <Text
+          key={g}
+          style={
+            g === current
+              ? [styles.ladderStepCurrent, { color: GRADE_COLORS[g] }]
+              : styles.ladderStep
+          }
+        >
+          {g === current ? `• ${g}` : g}
+        </Text>
+      ))}
+    </View>
+  );
+}
 
 function Masthead({ label }: { label: string }) {
   return (
@@ -329,34 +383,28 @@ function CoverPage({
           {result.flags.length > 0 && (
             <>
               <Text style={styles.sideHead}>Stabilize first</Text>
-              <Text style={styles.body}>
-                {result.flags.length === 1 ? (
-                  <Text>
-                    One dimension sits at F on the red-line set — the rungs
-                    where risk is existential regardless of the composite:{" "}
+              <Text style={[styles.body, { marginBottom: 3 }]}>
+                {result.flags.length === 1 ? "One dimension sits" : `${result.flags.length} dimensions sit`}{" "}
+                at F on the red-line set — the rungs where risk is existential
+                regardless of the composite. Each fix starts small:
+              </Text>
+              {result.flags.map((flag) => (
+                <View
+                  key={flag.dimensionId}
+                  style={{ flexDirection: "row", marginBottom: 2.5 }}
+                >
+                  <Text style={[styles.bold, { color: TOMATO, width: 10 }]}>
+                    •
                   </Text>
-                ) : (
-                  <Text>
-                    {result.flags.length} dimensions sit at F on the red-line
-                    set — the rungs where risk is existential regardless of the
-                    composite:{" "}
-                  </Text>
-                )}
-                {result.flags.map((flag, i) => (
-                  <Text key={flag.dimensionId}>
-                    {i > 0 ? " " : ""}
+                  <Text style={[styles.body, { flex: 1 }]}>
                     <Text style={[styles.bold, { color: TOMATO }]}>
                       {flag.dimensionName}
                     </Text>
                     {" — first step: "}
-                    {firstAction(
-                      actionPlanFor(flag.dimensionId, "F") ?? ""
-                    ).replace(/\.$/, "")}
-                    {"."}
+                    {firstAction(actionPlanFor(flag.dimensionId, "F") ?? "")}
                   </Text>
-                ))}{" "}
-                Each fix starts small; the inside pages give the full path.
-              </Text>
+                </View>
+              ))}
             </>
           )}
 
@@ -366,13 +414,30 @@ function CoverPage({
           {result.oneRungUp.map((item, i) => {
             const cell = actionPlanFor(item.dimensionId, item.current);
             return (
-              <Text key={item.dimensionId} style={[styles.body, { marginBottom: 4 }]}>
-                <Text style={styles.bold}>
-                  {i + 1}. {item.dimensionName} ({item.current} to {item.target}
-                  ).{" "}
+              <View
+                key={item.dimensionId}
+                style={{ flexDirection: "row", marginBottom: 3.5 }}
+              >
+                <Text style={[styles.bold, { width: 12, fontSize: 9 }]}>
+                  {i + 1}.
                 </Text>
-                {cell ? firstAction(cell) : ""}
-              </Text>
+                <Text style={[styles.body, { flex: 1 }]}>
+                  <Text style={styles.bold}>{item.dimensionName} </Text>
+                  <Text
+                    style={[styles.bold, { color: GRADE_COLORS[item.current] }]}
+                  >
+                    {item.current}
+                  </Text>
+                  <Text style={{ color: DIM }}>{" to "}</Text>
+                  <Text
+                    style={[styles.bold, { color: GRADE_COLORS[item.target] }]}
+                  >
+                    {item.target}
+                  </Text>
+                  {". "}
+                  {cell ? firstAction(cell) : ""}
+                </Text>
+              </View>
             );
           })}
 
@@ -387,7 +452,46 @@ function CoverPage({
             reach it. Re-assess annually: the trend line, not the snapshot, is
             the story.
           </Text>
+
+          <View style={styles.signatureRow}>
+            <View style={styles.signatureCell}>
+              <View style={styles.signatureLine} />
+              <Text style={styles.signatureLabel}>
+                Presented to the board / council on
+              </Text>
+            </View>
+            <View style={styles.signatureCell}>
+              <View style={styles.signatureLine} />
+              <Text style={styles.signatureLabel}>Presented by</Text>
+            </View>
+            <View style={styles.signatureCell}>
+              <View style={styles.signatureLine} />
+              <Text style={styles.signatureLabel}>Next re-assessment due</Text>
+            </View>
+          </View>
         </View>
+      </View>
+
+      <View style={styles.legendBand}>
+        <Text style={{ fontSize: 7.5, color: SLATE, lineHeight: 1.5 }}>
+          <Text style={[styles.bold, { fontSize: 7.5 }]}>
+            How to read this card:{" "}
+          </Text>
+          {GRADE_ORDER.map((g, i) => (
+            <Text key={g}>
+              {i > 0 ? "   " : ""}
+              <Text style={[styles.bold, { color: GRADE_COLORS[g] }]}>{g}</Text>
+              {` ${rubric.gradeLadder[g]}`}
+            </Text>
+          ))}
+          {"   ·   Grades average F=0 to A=4 within each leg.   ·   "}
+          <Text style={[styles.bold, { color: TOMATO, fontSize: 7.5 }]}>
+            RED-LINE
+          </Text>
+          {
+            " marks the dimensions where an F is an existential risk on its own — two or more cap the practical grade at D."
+          }
+        </Text>
       </View>
 
       <Footer systemName={utility.systemName} />
@@ -416,9 +520,12 @@ function DimensionRow({
           {grade}
         </Text>
         <Text style={[styles.railAvg, { textAlign: "center" }]}>
-          {rubric.gradeLadder[grade]}
+          {LADDER_SHORT[grade]}
         </Text>
-        {d.redLine && <Text style={styles.redLineTag}>RED-LINE</Text>}
+        <LadderScale current={grade} />
+        {d.redLine && (
+          <Text style={[styles.redLineTag, { marginTop: 3 }]}>RED-LINE</Text>
+        )}
       </View>
       <View style={{ flex: 1 }}>
         <Text style={[styles.body, { marginBottom: 2 }]}>
@@ -432,7 +539,7 @@ function DimensionRow({
         {next && (
           <Text style={[styles.body, { marginBottom: 2 }]}>
             <Text style={styles.bold}>
-              What {next} — {rubric.gradeLadder[next]} — looks like:{" "}
+              The next rung, {next} · {rubric.gradeLadder[next]}:{" "}
             </Text>
             {d.grades[next]}
           </Text>
@@ -484,8 +591,17 @@ function LegSection({
     <Page size="LETTER" style={styles.page}>
       <Masthead label={`${rubric.legs[leg]} capacity · ${year}`} />
 
-      <View style={{ flexDirection: "row", gap: 14 }}>
-        <View style={styles.dimRail}>
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 14,
+          backgroundColor: LINEN,
+          borderRadius: 5,
+          padding: 9,
+          alignItems: "center",
+        }}
+      >
+        <View style={[styles.dimRail, { paddingTop: 0 }]}>
           <Text style={[styles.dimLetter, { color: GRADE_COLORS[legScore.letter] }]}>
             {legScore.letter}
           </Text>
@@ -508,9 +624,6 @@ function LegSection({
           </Text>
         </View>
       </View>
-      <View
-        style={{ borderBottom: `2pt solid ${MIDNIGHT}`, marginTop: 8 }}
-      />
 
       {legDims.map((d) => (
         <DimensionRow
