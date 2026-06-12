@@ -41,17 +41,23 @@ import type {
 
 const MIDNIGHT = "#0c1f30";
 const TOMATO = "#ff442f";
-const SLATE = "#42515f";
-const DIM = "#5f6469";
+const SLATE = "#2f3d4a";
+const DIM = "#55616c";
 const RULE = "#ddd5ca";
 const LINEN = "#f6eee6";
 
+/**
+ * Grade scale with no amber/yellow band: deep red (F) and a tomato-family
+ * coral (D) on the warm "needs work" side, steel blue for C (stable reads
+ * calm, not caution), clear greens for B and A. The letter and ladder word
+ * always accompany the color, so the scale stays unambiguous.
+ */
 const GRADE_COLORS: Record<Grade, string> = {
-  F: "#b91c1c",
-  D: "#d97706",
-  C: "#a16207",
-  B: "#047857",
-  A: "#15803d",
+  F: "#d92d20",
+  D: "#e8654f",
+  C: "#4f7396",
+  B: "#1f9d66",
+  A: "#0c7a43",
 };
 
 const LEG_INTROS: Record<Leg, string> = {
@@ -143,9 +149,9 @@ const styles = StyleSheet.create({
   heroBand: {
     backgroundColor: MIDNIGHT,
     borderRadius: 8,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 18,
-    marginBottom: 10,
+    marginBottom: 9,
   },
   heroKicker: {
     fontSize: 9,
@@ -177,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   tileLetter: { fontSize: 30, fontWeight: "bold", lineHeight: 1.1 },
-  tileAvg: { fontSize: 7, color: DIM, marginTop: 1 },
+  tileAvg: { fontSize: 7.5, color: DIM, marginTop: 1 },
   panel: {
     borderRadius: 6,
     paddingVertical: 7,
@@ -197,8 +203,8 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   numberBadgeText: { fontSize: 8, color: "#ffffff", fontWeight: "bold" },
-  twoCol: { flexDirection: "row", gap: 18, marginTop: 16 },
-  rail: { width: 124 },
+  twoCol: { flexDirection: "row", gap: 14, marginTop: 16 },
+  rail: { width: 116 },
   railGrade: {
     paddingVertical: 7,
     borderBottom: `1pt solid ${RULE}`,
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1,
   },
-  railAvg: { fontSize: 7, color: DIM },
+  railAvg: { fontSize: 7.5, color: DIM },
   overallBlock: {
     marginTop: 10,
     backgroundColor: MIDNIGHT,
@@ -231,7 +237,7 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     marginTop: 8,
   },
-  body: { fontSize: 8.5, lineHeight: 1.4, color: SLATE },
+  body: { fontSize: 9, lineHeight: 1.42, color: SLATE },
   bold: { fontWeight: "bold", color: MIDNIGHT },
   link: { color: TOMATO, textDecoration: "none", fontWeight: "bold" },
   redLineTag: {
@@ -271,7 +277,7 @@ const styles = StyleSheet.create({
     height: 14,
     marginBottom: 3,
   },
-  signatureLabel: { fontSize: 7, color: DIM },
+  signatureLabel: { fontSize: 7.5, color: DIM },
   footer: {
     position: "absolute",
     bottom: 22,
@@ -449,11 +455,10 @@ function CoverPage({
               </>
             ) : (
               <>
-                Completing this assessment is itself the first managerial win:
-                most systems never put their position on paper. Every rung on
-                this ladder has been climbed by systems with fewer resources
-                than yours — and the next step in each dimension is listed
-                inside.
+                Completing this assessment is itself the first managerial win —
+                most systems never put their position on paper. Every rung
+                below has been climbed by systems with fewer resources, and the
+                next step in each dimension is inside.
               </>
             )}
           </Text>

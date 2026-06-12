@@ -5,12 +5,14 @@ import { actionPlanFor, dimensions, rubric } from "@/lib/content";
 import { score } from "@/lib/scoring";
 import type { Answers, ContactInfo, Grade, UtilityInfo } from "@/lib/types";
 
+// Matches the PDF grade scale (lib/pdf.tsx): no amber/yellow band — deep red,
+// tomato-family coral, steel blue for stable, clear greens.
 const GRADE_COLORS: Record<Grade, string> = {
-  F: "text-red-700",
-  D: "text-orange-600",
-  C: "text-yellow-600",
-  B: "text-emerald-600",
-  A: "text-green-700",
+  F: "text-[#d92d20]",
+  D: "text-[#e8654f]",
+  C: "text-[#4f7396]",
+  B: "text-[#1f9d66]",
+  A: "text-[#0c7a43]",
 };
 
 function DownloadPdfButton({
@@ -59,11 +61,11 @@ function DownloadPdfButton({
 }
 
 const GRADE_BG: Record<Grade, string> = {
-  F: "bg-red-50 border-red-200",
-  D: "bg-orange-50 border-orange-200",
-  C: "bg-yellow-50 border-yellow-200",
-  B: "bg-emerald-50 border-emerald-200",
-  A: "bg-green-50 border-green-200",
+  F: "bg-[#fdf0ef] border-[#f2c5c0]",
+  D: "bg-[#fdf4f2] border-[#f4d0c7]",
+  C: "bg-[#f2f6f9] border-[#ccdae5]",
+  B: "bg-[#eff9f4] border-[#bfe5d3]",
+  A: "bg-[#edf7f1] border-[#b7ddc6]",
 };
 
 export default function Results({
