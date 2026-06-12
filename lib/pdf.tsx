@@ -127,9 +127,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    paddingBottom: 7,
+    paddingBottom: 6,
     borderBottom: `2pt solid ${MIDNIGHT}`,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   logo: { width: 100 },
   docLabel: {
@@ -140,6 +140,63 @@ const styles = StyleSheet.create({
   },
   h1: { fontSize: 21, color: MIDNIGHT, fontWeight: "bold", lineHeight: 1.15 },
   meta: { fontSize: 8, color: DIM, marginTop: 3 },
+  heroBand: {
+    backgroundColor: MIDNIGHT,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    marginBottom: 10,
+  },
+  heroKicker: {
+    fontSize: 9,
+    color: TOMATO,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  heroName: {
+    fontSize: 26,
+    color: "#ffffff",
+    fontWeight: "bold",
+    lineHeight: 1.1,
+  },
+  heroMeta: { fontSize: 7.5, color: "#aebac6", marginTop: 5, lineHeight: 1.4 },
+  tile: {
+    backgroundColor: LINEN,
+    borderRadius: 6,
+    alignItems: "center",
+    paddingVertical: 9,
+    marginBottom: 8,
+  },
+  tileLabel: {
+    fontSize: 7,
+    color: SLATE,
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
+    marginBottom: 1,
+  },
+  tileLetter: { fontSize: 30, fontWeight: "bold", lineHeight: 1.1 },
+  tileAvg: { fontSize: 7, color: DIM, marginTop: 1 },
+  panel: {
+    borderRadius: 6,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    marginTop: 8,
+  },
+  panelTomato: { backgroundColor: "#fff3f0", borderLeft: `3pt solid ${TOMATO}` },
+  panelLinen: { backgroundColor: LINEN, borderLeft: `3pt solid ${MIDNIGHT}` },
+  numberBadge: {
+    width: 13,
+    height: 13,
+    borderRadius: 6.5,
+    backgroundColor: MIDNIGHT,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 6,
+    marginTop: 1,
+  },
+  numberBadgeText: { fontSize: 8, color: "#ffffff", fontWeight: "bold" },
   twoCol: { flexDirection: "row", gap: 18, marginTop: 16 },
   rail: { width: 124 },
   railGrade: {
@@ -172,9 +229,9 @@ const styles = StyleSheet.create({
     letterSpacing: 1.4,
     textTransform: "uppercase",
     marginBottom: 3,
-    marginTop: 11,
+    marginTop: 8,
   },
-  body: { fontSize: 8.5, lineHeight: 1.45, color: SLATE },
+  body: { fontSize: 8.5, lineHeight: 1.4, color: SLATE },
   bold: { fontWeight: "bold", color: MIDNIGHT },
   link: { color: TOMATO, textDecoration: "none", fontWeight: "bold" },
   redLineTag: {
@@ -195,15 +252,18 @@ const styles = StyleSheet.create({
   ladderStep: { fontSize: 6, lineHeight: 1.35, color: "#c9c1b4" },
   ladderStepCurrent: { fontSize: 6, lineHeight: 1.35, fontWeight: "bold" },
   legendBand: {
-    marginTop: 14,
+    position: "absolute",
+    left: 44,
+    right: 44,
+    bottom: 36,
     backgroundColor: LINEN,
     borderRadius: 5,
-    padding: 9,
+    padding: 8,
   },
   signatureRow: {
     flexDirection: "row",
     gap: 24,
-    marginTop: 16,
+    marginTop: 12,
   },
   signatureCell: { flex: 1 },
   signatureLine: {
@@ -296,43 +356,58 @@ function CoverPage({
     .slice(0, 5);
 
   return (
-    <Page size="LETTER" style={styles.page}>
-      <Masthead label={`Utility Health Report Card · ${year}`} />
+    // Extra bottom padding reserves space for the absolutely-positioned
+    // legend band so flowing content never collides or overflows the page.
+    <Page size="LETTER" style={[styles.page, { paddingBottom: 84 }]}>
+      <Masthead label="Living Map Series" />
 
-      <Text style={styles.h1}>{utility.systemName}</Text>
-      <Text style={styles.meta}>
-        {utility.state}
-        {utility.connections ? ` · ${utility.connections} connections` : ""}
-        {utility.pwsId ? ` · PWS ID ${utility.pwsId}` : ""} · Self-assessed by{" "}
-        {contact.name} ({contact.role}) · {new Date().toISOString().slice(0, 10)}
-      </Text>
-      <Text style={[styles.meta, { marginTop: 2 }]}>
-        23 dimensions of Technical, Managerial, and Financial capacity — EPA&apos;s
-        TMF framework (SDWA §1420) — each graded F (Survival) to A (Thriving).
-      </Text>
+      <View style={styles.heroBand}>
+        <Text style={styles.heroKicker}>
+          {year} Utility Health Report Card · Prepared for
+        </Text>
+        <Text style={styles.heroName}>{utility.systemName}</Text>
+        <Text style={styles.heroMeta}>
+          {utility.state}
+          {utility.connections ? ` · ${utility.connections} connections` : ""}
+          {utility.pwsId ? ` · PWS ID ${utility.pwsId}` : ""} · Self-assessed by{" "}
+          {contact.name} ({contact.role}) · {new Date().toISOString().slice(0, 10)}
+          {"\n"}23 dimensions of Technical, Managerial, and Financial capacity —
+          EPA&apos;s TMF framework (SDWA §1420) — each graded F (Survival) to A
+          (Thriving).
+        </Text>
+      </View>
 
-      <View style={styles.twoCol}>
+      <View style={[styles.twoCol, { marginTop: 0 }]}>
         {/* Left rail: grades stacked vertically */}
         <View style={styles.rail}>
           {result.legs.map((leg) => (
-            <View key={leg.leg} style={styles.railGrade}>
+            <View
+              key={leg.leg}
+              style={[
+                styles.tile,
+                { borderLeft: `3pt solid ${GRADE_COLORS[leg.letter]}` },
+              ]}
+            >
+              <Text style={styles.tileLabel}>{rubric.legs[leg.leg]}</Text>
               <Text
-                style={[styles.railLetter, { color: GRADE_COLORS[leg.letter] }]}
+                style={[styles.tileLetter, { color: GRADE_COLORS[leg.letter] }]}
               >
                 {leg.letter}
               </Text>
-              <View>
-                <Text style={styles.railLabel}>{rubric.legs[leg.leg]}</Text>
-                <Text style={styles.railAvg}>avg {leg.average.toFixed(2)} / 4</Text>
-              </View>
+              <Text style={styles.tileAvg}>avg {leg.average.toFixed(2)} / 4</Text>
             </View>
           ))}
-          <View style={styles.overallBlock}>
-            <Text style={[styles.railLabel, { color: "#cdd5dd" }]}>Overall</Text>
-            <Text style={[styles.railLetter, { color: "#ffffff", width: "auto" }]}>
+          <View
+            style={[
+              styles.tile,
+              { backgroundColor: MIDNIGHT, borderLeft: `3pt solid ${TOMATO}` },
+            ]}
+          >
+            <Text style={[styles.tileLabel, { color: "#cdd5dd" }]}>Overall</Text>
+            <Text style={[styles.tileLetter, { color: "#ffffff" }]}>
               {result.overallLetter}
             </Text>
-            <Text style={[styles.railAvg, { color: "#cdd5dd" }]}>
+            <Text style={[styles.tileAvg, { color: "#cdd5dd" }]}>
               avg {result.overallAverage.toFixed(2)} / 4
             </Text>
             {result.practicalGrade && (
@@ -342,6 +417,7 @@ function CoverPage({
                   color: "#ffb4ab",
                   marginTop: 4,
                   textAlign: "center",
+                  paddingHorizontal: 6,
                 }}
               >
                 Practical grade {result.practicalGrade} until the{" "}
@@ -354,7 +430,9 @@ function CoverPage({
 
         {/* Right: the narrative */}
         <View style={styles.narrative}>
-          <Text style={styles.sideHead}>What&apos;s working</Text>
+          <Text style={[styles.sideHead, { marginTop: 0 }]}>
+            What&apos;s working
+          </Text>
           <Text style={styles.body}>
             {strengths.length > 0 ? (
               <>
@@ -381,8 +459,10 @@ function CoverPage({
           </Text>
 
           {result.flags.length > 0 && (
-            <>
-              <Text style={styles.sideHead}>Stabilize first</Text>
+            <View style={[styles.panel, styles.panelTomato]}>
+              <Text style={[styles.sideHead, { marginTop: 0 }]}>
+                Stabilize first
+              </Text>
               <Text style={[styles.body, { marginBottom: 3 }]}>
                 {result.flags.length === 1 ? "One dimension sits" : `${result.flags.length} dimensions sit`}{" "}
                 at F on the red-line set — the rungs where risk is existential
@@ -405,7 +485,7 @@ function CoverPage({
                   </Text>
                 </View>
               ))}
-            </>
+            </View>
           )}
 
           <Text style={styles.sideHead}>
@@ -416,11 +496,11 @@ function CoverPage({
             return (
               <View
                 key={item.dimensionId}
-                style={{ flexDirection: "row", marginBottom: 3.5 }}
+                style={{ flexDirection: "row", marginBottom: 4.5 }}
               >
-                <Text style={[styles.bold, { width: 12, fontSize: 9 }]}>
-                  {i + 1}.
-                </Text>
+                <View style={styles.numberBadge}>
+                  <Text style={styles.numberBadgeText}>{i + 1}</Text>
+                </View>
                 <Text style={[styles.body, { flex: 1 }]}>
                   <Text style={styles.bold}>{item.dimensionName} </Text>
                   <Text
@@ -441,17 +521,21 @@ function CoverPage({
             );
           })}
 
-          <Text style={styles.sideHead}>For the board / council</Text>
-          <Text style={styles.body}>
-            This is the same Technical / Managerial / Financial lens state
-            regulators and SRF lenders use. Capacity is built one rung at a
-            time, and it is multiplicative — a weak leg drags the others down,
-            which is why the moves above are the year&apos;s best return on
-            investment. The pages inside show, for every dimension, exactly
-            what the next rung looks like and the no-cost help available to
-            reach it. Re-assess annually: the trend line, not the snapshot, is
-            the story.
-          </Text>
+          <View style={[styles.panel, styles.panelLinen]}>
+            <Text style={[styles.sideHead, { marginTop: 0 }]}>
+              For the board / council
+            </Text>
+            <Text style={styles.body}>
+              This is the same Technical / Managerial / Financial lens state
+              regulators and SRF lenders use. Capacity is built one rung at a
+              time, and it is multiplicative — a weak leg drags the others
+              down, which is why the moves above are the year&apos;s best
+              return on investment. The pages inside show, for every dimension,
+              exactly what the next rung looks like and the no-cost help
+              available to reach it. Re-assess annually: the trend line, not
+              the snapshot, is the story.
+            </Text>
+          </View>
 
           <View style={styles.signatureRow}>
             <View style={styles.signatureCell}>
@@ -514,7 +598,13 @@ function DimensionRow({
   const links = linksFor(d.id, grade);
 
   return (
-    <View style={styles.dimRow} wrap={false}>
+    <View
+      style={[
+        styles.dimRow,
+        { borderLeft: `2.5pt solid ${GRADE_COLORS[grade]}`, paddingLeft: 9 },
+      ]}
+      wrap={false}
+    >
       <View style={styles.dimRail}>
         <Text style={[styles.dimLetter, { color: GRADE_COLORS[grade] }]}>
           {grade}
