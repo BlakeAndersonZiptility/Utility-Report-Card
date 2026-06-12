@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
-/* Palette C from the white paper visual brief: navy + clay + parchment. */
+/* Ziptility brand palette (ziptility.com): midnight blue, tomato, linen. */
 :root {
-  --background: #f4f1ed;
-  --foreground: #1f2933;
-  --navy: #1f4e79;
-  --clay: #b25d2c;
+  --background: #f6eee6;
+  --foreground: #42515f;
+  --navy: #0c1f30;
+  --clay: #ff442f;
 }
 
 @theme inline {

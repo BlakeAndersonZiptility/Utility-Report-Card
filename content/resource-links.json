@@ -1,0 +1,22 @@
+{
+  "description": "Curated, org-level resource links used in the PDF and results page. Per Field Guide integrity rules: only verified, stable organization/program URLs — no deep links that rot, no fabricated pages. Keys are matched against the resource text in the Action Plan Library.",
+  "links": [
+    { "match": "EPA Five Core Questions", "label": "EPA Capacity Development", "url": "https://www.epa.gov/dwcapacity" },
+    { "match": "EPA Capacity Development", "label": "EPA Capacity Development", "url": "https://www.epa.gov/dwcapacity" },
+    { "match": "state primacy", "label": "EPA Capacity Development", "url": "https://www.epa.gov/dwcapacity" },
+    { "match": "EPA Source Water", "label": "EPA Source Water Protection", "url": "https://www.epa.gov/sourcewaterprotection" },
+    { "match": "EPA SWP", "label": "EPA Source Water Protection", "url": "https://www.epa.gov/sourcewaterprotection" },
+    { "match": "AWIA", "label": "EPA Water Resilience (AWIA)", "url": "https://www.epa.gov/waterresilience" },
+    { "match": "EPA ERP", "label": "EPA Water Resilience (AWIA)", "url": "https://www.epa.gov/waterresilience" },
+    { "match": "WARN", "label": "EPA Water Resilience (AWIA)", "url": "https://www.epa.gov/waterresilience" },
+    { "match": "AWWA", "label": "AWWA (M-series manuals)", "url": "https://www.awwa.org" },
+    { "match": "RCAP", "label": "RCAP", "url": "https://www.rcap.org" },
+    { "match": "RCAC", "label": "RCAC", "url": "https://www.rcac.org" },
+    { "match": "EFCN", "label": "Environmental Finance Center Network", "url": "https://efcnetwork.org" },
+    { "match": "state RWA", "label": "NRWA (find your state RWA)", "url": "https://nrwa.org" },
+    { "match": "NRWA", "label": "NRWA (find your state RWA)", "url": "https://nrwa.org" },
+    { "match": "GFOA", "label": "GFOA", "url": "https://www.gfoa.org" },
+    { "match": "GASB", "label": "GFOA", "url": "https://www.gfoa.org" },
+    { "match": "LIHWAP", "label": "LIHWAP (HHS)", "url": "https://www.acf.hhs.gov/ocs/programs/lihwap" }
+  ]
+}

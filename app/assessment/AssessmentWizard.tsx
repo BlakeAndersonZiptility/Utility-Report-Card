@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { GRADE_ORDER, dimensions, rubric } from "@/lib/content";
@@ -108,8 +109,14 @@ export default function AssessmentWizard() {
     <main className="flex-1">
       <header className="no-print border-b border-navy/15 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
-          <Link href="/" className="font-semibold text-navy">
-            {rubric.title}
+          <Link href="/" className="flex items-center gap-3 font-semibold text-navy">
+            <Image
+              src="/ziptility-logo.png"
+              alt="Ziptility"
+              width={110}
+              height={14}
+            />
+            <span className="hidden text-sm sm:inline">{rubric.title}</span>
           </Link>
           <div className="flex items-center gap-4 text-sm text-foreground/60">
             <span>

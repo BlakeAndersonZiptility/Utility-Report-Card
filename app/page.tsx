@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { rubric } from "@/lib/content";
 
@@ -6,6 +7,14 @@ export default function Home() {
   return (
     <main className="flex-1">
       <section className="mx-auto max-w-3xl px-6 py-16">
+        <Image
+          src="/ziptility-logo.png"
+          alt="Ziptility"
+          width={160}
+          height={20}
+          className="mb-8"
+          priority
+        />
         <p className="text-sm font-semibold uppercase tracking-widest text-clay">
           Living Map Series · Free self-assessment
         </p>
