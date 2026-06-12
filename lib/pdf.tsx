@@ -3,7 +3,9 @@ import {
   Image,
   Link,
   Page,
+  Polygon,
   StyleSheet,
+  Svg,
   Text,
   View,
   renderToBuffer,
@@ -45,17 +47,19 @@ const SLATE = "#2f3d4a";
 const DIM = "#55616c";
 const RULE = "#ddd5ca";
 const LINEN = "#f6eee6";
+const PAPER = "#fcf8f3"; // warm page tint — surfaces (cards, panels) sit white on top
+const SURFACE_BORDER = "#eadfd2";
 
 /**
  * Grade scale with no amber/yellow band: deep red (F) and a tomato-family
- * coral (D) on the warm "needs work" side, steel blue for C (stable reads
- * calm, not caution), clear greens for B and A. The letter and ladder word
- * always accompany the color, so the scale stays unambiguous.
+ * coral (D) on the warm "needs work" side, teal for C (stable reads calm,
+ * not caution), clear greens for B and A. The letter and ladder word always
+ * accompany the color, so the scale stays unambiguous.
  */
 const GRADE_COLORS: Record<Grade, string> = {
   F: "#d92d20",
   D: "#e8654f",
-  C: "#4f7396",
+  C: "#0c7589",
   B: "#1f9d66",
   A: "#0c7a43",
 };
@@ -127,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 8.5,
     color: SLATE,
     lineHeight: 1.45,
-    backgroundColor: "#ffffff",
+    backgroundColor: PAPER,
   },
   masthead: {
     flexDirection: "row",
@@ -169,11 +173,13 @@ const styles = StyleSheet.create({
   },
   heroMeta: { fontSize: 7.5, color: "#aebac6", marginTop: 5, lineHeight: 1.4 },
   tile: {
-    backgroundColor: LINEN,
+    backgroundColor: "#ffffff",
+    border: `1pt solid ${SURFACE_BORDER}`,
     borderRadius: 6,
     alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 9,
-    marginBottom: 8,
+    flexGrow: 1,
   },
   tileLabel: {
     fontSize: 7,
@@ -203,8 +209,8 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   numberBadgeText: { fontSize: 8, color: "#ffffff", fontWeight: "bold" },
-  twoCol: { flexDirection: "row", gap: 14, marginTop: 16 },
-  rail: { width: 116 },
+  twoCol: { flexDirection: "row", gap: 14, marginTop: 16, flex: 1 },
+  rail: { width: 116, gap: 8 },
   railGrade: {
     paddingVertical: 7,
     borderBottom: `1pt solid ${RULE}`,
@@ -227,7 +233,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
   },
-  narrative: { flex: 1 },
+  narrative: { flex: 1, justifyContent: "space-between" },
   sideHead: {
     fontSize: 8,
     color: MIDNIGHT,
@@ -291,6 +297,16 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
 });
+
+/** The Ziptility double-slash mark, echoed as a small decorative motif. */
+function Slashes({ size = 14, color = TOMATO }: { size?: number; color?: string }) {
+  return (
+    <Svg width={size} height={size * 0.78} viewBox="0 0 18 14">
+      <Polygon points="5,0 9,0 4,14 0,14" fill={color} />
+      <Polygon points="12,0 16,0 11,14 7,14" fill={color} opacity={0.55} />
+    </Svg>
+  );
+}
 
 /**
  * The ladder, made visible: five rungs top-to-bottom (A down to F) with the
@@ -368,9 +384,19 @@ function CoverPage({
       <Masthead label="Living Map Series" />
 
       <View style={styles.heroBand}>
-        <Text style={styles.heroKicker}>
-          {year} Utility Health Report Card · Prepared for
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            marginBottom: 4,
+          }}
+        >
+          <Slashes size={11} />
+          <Text style={[styles.heroKicker, { marginBottom: 0 }]}>
+            {year} Utility Health Report Card · Prepared for
+          </Text>
+        </View>
         <Text style={styles.heroName}>{utility.systemName}</Text>
         <Text style={styles.heroMeta}>
           {utility.state}
@@ -434,34 +460,38 @@ function CoverPage({
           </View>
         </View>
 
-        {/* Right: the narrative */}
+        {/* Right: the narrative. Sections distribute vertically to fill the
+            same height as the grade rail (justifyContent: space-between). */}
         <View style={styles.narrative}>
-          <Text style={[styles.sideHead, { marginTop: 0 }]}>
-            What&apos;s working
-          </Text>
-          <Text style={styles.body}>
-            {strengths.length > 0 ? (
-              <>
-                {strengths.map((d, i) => (
-                  <Text key={d.id}>
-                    {i > 0 ? " · " : ""}
-                    <Text style={styles.bold}>{d.name}</Text> (
-                    {result.answersByDim[d.id]})
-                  </Text>
-                ))}
-                {". "}
-                These are earned positions — most systems this size never get
-                them on paper. They are the foundation the next steps build on.
-              </>
-            ) : (
-              <>
-                Completing this assessment is itself the first managerial win —
-                most systems never put their position on paper. Every rung
-                below has been climbed by systems with fewer resources, and the
-                next step in each dimension is inside.
-              </>
-            )}
-          </Text>
+          <View>
+            <Text style={[styles.sideHead, { marginTop: 0 }]}>
+              What&apos;s working
+            </Text>
+            <Text style={styles.body}>
+              {strengths.length > 0 ? (
+                <>
+                  {strengths.map((d, i) => (
+                    <Text key={d.id}>
+                      {i > 0 ? " · " : ""}
+                      <Text style={styles.bold}>{d.name}</Text> (
+                      {result.answersByDim[d.id]})
+                    </Text>
+                  ))}
+                  {". "}
+                  These are earned positions — most systems this size never get
+                  them on paper. They are the foundation the next steps build
+                  on.
+                </>
+              ) : (
+                <>
+                  Completing this assessment is itself the first managerial win
+                  — most systems never put their position on paper. Every rung
+                  below has been climbed by systems with fewer resources, and
+                  the next step in each dimension is inside.
+                </>
+              )}
+            </Text>
+          </View>
 
           {result.flags.length > 0 && (
             <View style={[styles.panel, styles.panelTomato]}>
@@ -493,38 +523,43 @@ function CoverPage({
             </View>
           )}
 
-          <Text style={styles.sideHead}>
-            This year&apos;s three highest-leverage moves
-          </Text>
-          {result.oneRungUp.map((item, i) => {
-            const cell = actionPlanFor(item.dimensionId, item.current);
-            return (
-              <View
-                key={item.dimensionId}
-                style={{ flexDirection: "row", marginBottom: 4.5 }}
-              >
-                <View style={styles.numberBadge}>
-                  <Text style={styles.numberBadgeText}>{i + 1}</Text>
+          <View>
+            <Text style={styles.sideHead}>
+              This year&apos;s three highest-leverage moves
+            </Text>
+            {result.oneRungUp.map((item, i) => {
+              const cell = actionPlanFor(item.dimensionId, item.current);
+              return (
+                <View
+                  key={item.dimensionId}
+                  style={{ flexDirection: "row", marginBottom: 4.5 }}
+                >
+                  <View style={styles.numberBadge}>
+                    <Text style={styles.numberBadgeText}>{i + 1}</Text>
+                  </View>
+                  <Text style={[styles.body, { flex: 1 }]}>
+                    <Text style={styles.bold}>{item.dimensionName} </Text>
+                    <Text
+                      style={[
+                        styles.bold,
+                        { color: GRADE_COLORS[item.current] },
+                      ]}
+                    >
+                      {item.current}
+                    </Text>
+                    <Text style={{ color: DIM }}>{" to "}</Text>
+                    <Text
+                      style={[styles.bold, { color: GRADE_COLORS[item.target] }]}
+                    >
+                      {item.target}
+                    </Text>
+                    {". "}
+                    {cell ? firstAction(cell) : ""}
+                  </Text>
                 </View>
-                <Text style={[styles.body, { flex: 1 }]}>
-                  <Text style={styles.bold}>{item.dimensionName} </Text>
-                  <Text
-                    style={[styles.bold, { color: GRADE_COLORS[item.current] }]}
-                  >
-                    {item.current}
-                  </Text>
-                  <Text style={{ color: DIM }}>{" to "}</Text>
-                  <Text
-                    style={[styles.bold, { color: GRADE_COLORS[item.target] }]}
-                  >
-                    {item.target}
-                  </Text>
-                  {". "}
-                  {cell ? firstAction(cell) : ""}
-                </Text>
-              </View>
-            );
-          })}
+              );
+            })}
+          </View>
 
           <View style={[styles.panel, styles.panelLinen]}>
             <Text style={[styles.sideHead, { marginTop: 0 }]}>
@@ -690,7 +725,8 @@ function LegSection({
         style={{
           flexDirection: "row",
           gap: 14,
-          backgroundColor: LINEN,
+          backgroundColor: "#ffffff",
+          border: `1pt solid ${SURFACE_BORDER}`,
           borderRadius: 5,
           padding: 9,
           alignItems: "center",
@@ -705,9 +741,12 @@ function LegSection({
           </Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.h1, { fontSize: 15 }]}>
-            {rubric.legs[leg]} capacity
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Slashes size={12} />
+            <Text style={[styles.h1, { fontSize: 15 }]}>
+              {rubric.legs[leg]} capacity
+            </Text>
+          </View>
           <Text style={[styles.body, { color: DIM }]}>{LEG_INTROS[leg]}</Text>
           <Text style={[styles.body, { marginTop: 3 }]}>
             <Text style={styles.bold}>Strengths to build on: </Text>
